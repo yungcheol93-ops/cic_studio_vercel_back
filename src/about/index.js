@@ -16,7 +16,7 @@ router.get("/about", async (req, res) => {
     res.json(data);
 });
 
-// 관리자: about 조회 (공개와 동일하지만 별도 엔드포인트 유지)
+// 관리자: about 조회
 router.get("/admin/about", requireAdmin, async (req, res) => {
     const { data, error } = await supabase
         .from("about")
@@ -29,7 +29,7 @@ router.get("/admin/about", requireAdmin, async (req, res) => {
 });
 
 // 관리자: about 수정
-router.patch("/admin/about", requireAdmin, async (req, res) => {
+router.put("/admin/about", requireAdmin, async (req, res) => {
     const { imageUrl, content } = req.body;
 
     const { error } = await supabase
