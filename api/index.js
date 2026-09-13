@@ -14,6 +14,7 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173",
     "https://cicstudio.vercel.app",
+    "https://cic-front.vercel.app",
     "https://www.cicworks.com",
     "https://cicworks.com",
 ];
@@ -28,4 +29,3 @@ app.use("/api", projectRoutes);
 app.use("/api", furnitureRoutes);
 
 module.exports = app;
-module.exports.handler = serverless(app);
