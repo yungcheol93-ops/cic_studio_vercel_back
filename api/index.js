@@ -8,6 +8,7 @@ const authRoutes = require("../src/auth");
 const homeRoutes = require("../src/home");
 const projectRoutes = require("../src/project");
 const furnitureRoutes = require("../src/furniture");
+const aboutRoutes = require("../src/about");
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api", homeRoutes);
 app.use("/api", projectRoutes);
 app.use("/api", furnitureRoutes);
+app.use("/api", aboutRoutes);
 
 module.exports = app;
