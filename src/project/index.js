@@ -5,13 +5,13 @@ const { requireAdmin } = require("../middleware/auth");
 const router = express.Router();
 
 const PROJECT_LIST_FIELDS =
-    "id, projectCode:project_code, completion, thumbnailUrl:thumbnail_url, status, isPublic:is_public";
+    "id, projectCode:project_code, completion, thumbnailUrls:thumbnail_urls, status, isPublic:is_public";
 
 const PROJECT_PUBLIC_LIST_FIELDS =
-    "id, projectCode:project_code, completion, thumbnailUrl:thumbnail_url, isPublic:is_public";
+    "id, projectCode:project_code, completion, thumbnailUrls:thumbnail_urls, isPublic:is_public";
 
 const PROJECT_DETAIL_FIELDS =
-    "id, projectCode:project_code, completion, location, type, scope, photography, description, status, thumbnailUrl:thumbnail_url, isPublic:is_public";
+    "id, projectCode:project_code, completion, location, type, scope, photography, description, status, thumbnailUrls:thumbnail_urls, isPublic:is_public";
 
 const IMAGE_FIELDS = "id, projectId:project_id, imageUrl:image_url, orderIndex:order_index";
 
@@ -117,8 +117,8 @@ router.get("/admin/project/:projectId", requireAdmin, async (req, res) => {
 
 // 관리자: 프로젝트 등록 (요청 바디: imageUrls 문자열 배열)
 router.post("/admin/project", requireAdmin, async (req, res) => {
-    const { projectCode, completion, location, type, scope, photography, description, thumbnailUrl, imageUrls } =
-        req.body;
+    const { projectCode, completion, location, type, scope, photography, description,
+        thumbnailUrls, imageUrls } = req.body;
 
     const { data: maxData, error: maxError } = await supabase
         .from("project")
@@ -140,7 +140,7 @@ router.post("/admin/project", requireAdmin, async (req, res) => {
             scope,
             photography,
             description,
-            thumbnail_url: thumbnailUrl,
+            thumbnail_urls: thumbnailUrls || [],
             display_order: nextOrder,
         })
         .select()
@@ -164,18 +164,10 @@ router.post("/admin/project", requireAdmin, async (req, res) => {
 // 관리자: 프로젝트 수정 (요청 바디: imageUrls 문자열 배열)
 router.patch("/admin/project/:projectId", requireAdmin, async (req, res) => {
     const {
-        projectCode,
-        completion,
-        location,
-        type,
-        scope,
-        photography,
-        description,
-        status,
-        isPublic,
-        thumbnailUrl,
-        imageUrls,
+        projectCode, completion, location, type, scope, photography, description,
+        status, isPublic, thumbnailUrls, imageUrls,
     } = req.body;
+
 
     const updateFields = {
         updated_at: new Date().toISOString(),
@@ -188,18 +180,11 @@ router.patch("/admin/project/:projectId", requireAdmin, async (req, res) => {
         ...(description != null && { description }),
         ...(status != null && { status }),
         ...(isPublic != null && { is_public: isPublic }),
+        ...(thumbnailUrls != null && { thumbnail_urls: thumbnailUrls }),
     };
 
     const { error } = await supabase.from("project").update(updateFields).eq("id", req.params.projectId);
     if (error) return res.status(500).json({ message: error.message });
-
-    if (thumbnailUrl != null) {
-        const { error: thumbError } = await supabase
-            .from("project")
-            .update({ thumbnail_url: thumbnailUrl })
-            .eq("id", req.params.projectId);
-        if (thumbError) return res.status(500).json({ message: thumbError.message });
-    }
 
     if (Array.isArray(imageUrls)) {
         const { error: delError } = await supabase
