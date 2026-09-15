@@ -15,7 +15,7 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173",
     "https://cicstudio.vercel.app",
-    "https://cic-front.vercel.app",
+    "https://cic-studio-vercel-back-oogf.vercel.app",
     "https://www.cicworks.com",
     "https://cicworks.com",
 ];
