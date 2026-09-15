@@ -15,12 +15,21 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173",
     "https://cicstudio.vercel.app",
-    "https://cic-studio-vercel-back.vercel.app",
+    'https://cic-studio-vercel-back-oogf.vercel.app',
     "https://www.cicworks.com",
     "https://cicworks.com",
 ];
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
 app.use(express.json());
 app.use(verifyToken);
 
